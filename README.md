@@ -1,14 +1,64 @@
+<div align="center">
+
+<img src="docs/screenshots/critter-demo.gif" width="260" alt="The hanging critter dropping lower as weekly usage fills up">
+
 # Claude Usage Pebble
 
-A tiny always-on-top desktop widget (a "pebble" that sits on your screen) that shows your Claude plan usage: the current session, this week, and any per-model weekly limits (for example Fable). Click it to pull down the details. Works on **Windows, macOS and Linux**.
+**Your Claude plan usage, always one glance away.**
 
-Pick from six layouts, from a 30px dot to a little critter hanging off the top of your screen.
+A tiny always-on-top desktop widget that shows your current session, this week, and any per-model weekly limits.<br>
+Six layouts, from a 30px dot to a little critter hanging off the top of your screen.
 
-> Unofficial community project. Not affiliated with or endorsed by Anthropic. "Claude" is a trademark of Anthropic.
+<p>
+  <a href="#install-and-run"><img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows11&logoColor=white"></a>
+  <a href="#install-and-run"><img alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white"></a>
+  <a href="#install-and-run"><img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black"></a>
+  <a href="https://www.electronjs.org"><img alt="Electron" src="https://img.shields.io/github/package-json/dependency-version/mu-ki/claude-usage-pebble/dev/electron?style=flat&logo=electron&logoColor=white&label=Electron&color=47848F"></a>
+  <a href="https://nodejs.org"><img alt="Node.js 18+" src="https://img.shields.io/badge/Node.js-18%2B-339933?style=flat&logo=nodedotjs&logoColor=white"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/mu-ki/claude-usage-pebble?style=flat&color=f5c518&label=license"></a>
+</p>
+<p>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/mu-ki/claude-usage-pebble?style=flat&color=D97757&label=release&include_prereleases"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/mu-ki/claude-usage-pebble?style=flat&logo=github&color=yellow"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/mu-ki/claude-usage-pebble?style=flat&color=8A63D2"></a>
+  <img alt="No telemetry" src="https://img.shields.io/badge/telemetry-none-2ea44f?style=flat">
+  <a href="#contributing"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-ff69b4?style=flat"></a>
+</p>
+
+<h3>
+  <a href="#install-and-run">Quick start</a> ·
+  <a href="#layouts">Layouts</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#build-an-app-file">Build</a> ·
+  <a href="#adding-a-layout">Add a layout</a>
+</h3>
+
+```bash
+git clone https://github.com/mu-ki/claude-usage-pebble.git && cd claude-usage-pebble && npm install && npm start
+```
+
+<sub>Unofficial community project. Not affiliated with or endorsed by Anthropic. "Claude" is a trademark of Anthropic.</sub>
+
+</div>
+
+---
+
+## Why you'll like it
+
+| | |
+|---|---|
+| 🪶 **Tiny and out of the way** | Sits on top of every window, takes a few pixels, drag it anywhere. |
+| 📊 **Every limit at once** | Current session, this week, and per-model weekly limits (for example Fable). |
+| 🎨 **Six layouts** | Bar, dot, critter, rings, battery or terminal. Switch with a right-click. |
+| 🚦 **Warns you early** | Bars turn amber at 75% and red at 90%. The critter gets worried above 80%. |
+| 🔒 **Private by design** | Talks only to claude.ai. No server, no analytics, no telemetry. |
+| 💻 **Cross-platform** | Windows, macOS and Linux, from one small Electron app. |
 
 ## Layouts
 
 Right-click the widget → **Layout** to switch. Your choice and position are remembered.
+
+<div align="center">
 
 <table>
   <tr><th>Layout</th><th>Collapsed</th><th>Click to expand</th></tr>
@@ -44,9 +94,11 @@ Right-click the widget → **Layout** to switch. Your choice and position are re
   </tr>
 </table>
 
+</div>
+
 Bars turn amber at 75% and red at 90%. Screenshots use sample data.
 
-To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate these images.
+To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate these images and the demo GIF.
 
 ## Install and run
 
@@ -98,7 +150,7 @@ main.js          window, layout menu, settings, fetching usage, sign-in, start a
 preload.js       narrow bridge between the page and the main process
 widget.html      all six layouts (plain HTML/CSS/JS, no build step)
 docs/gallery.html  preview of every layout with sample data
-docs/capture.js    generates docs/screenshots (npm run screenshots)
+docs/capture.js    generates docs/screenshots and the demo GIF (npm run screenshots)
 ```
 
 ### Adding a layout
@@ -108,6 +160,10 @@ docs/capture.js    generates docs/screenshots (npm run screenshots)
 
 The window resizes itself to fit whatever your layout renders.
 
+## Contributing
+
+Issues and pull requests are welcome. New layouts are especially fun to add, see [Adding a layout](#adding-a-layout). If claude.ai changes and the widget starts showing an error, please [open an issue](https://github.com/mu-ki/claude-usage-pebble/issues).
+
 ## Credits
 
 Inspired by [claude-usage-tool](https://github.com/IgniteStudiosLtd/claude-usage-tool), a macOS menu bar app.
@@ -115,3 +171,7 @@ Inspired by [claude-usage-tool](https://github.com/IgniteStudiosLtd/claude-usage
 ## License
 
 [MIT](LICENSE)
+
+<div align="center">
+<sub>If the pebble saves you from a surprise limit, a ⭐ helps other people find it.</sub>
+</div>

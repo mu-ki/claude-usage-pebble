@@ -33,7 +33,8 @@
   },
   "devDependencies": {
     "electron": "^44.7.2",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^26.15.3",
+    "gifenc": "^1.0.3"
   },
   "license": "MIT",
   "repository": {
