@@ -11,7 +11,7 @@
   "build": {
     "appId": "com.claudeusagepebble.app",
     "productName": "Claude Usage Pebble",
-    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "${name}-${os}-${arch}.${ext}",
     "files": [
       "main.js",
       "preload.js",

@@ -26,12 +26,16 @@ Six layouts, from a 30px dot to a little critter hanging off the top of your scr
 </p>
 
 <p>
-  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-D97757?style=for-the-badge&logo=github&logoColor=white"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64.exe"><img alt="Download for Windows" src="https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-mac-universal.dmg"><img alt="Download for macOS" src="https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple&logoColor=white"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-linux-x86_64.AppImage"><img alt="Download for Linux" src="https://img.shields.io/badge/Download-Linux-E95420?style=for-the-badge&logo=linux&logoColor=white"></a>
+</p>
+<p>
   <a href="https://mu-ki.github.io/claude-usage-pebble/docs/gallery.html"><img alt="Try the live demo" src="https://img.shields.io/badge/Live%20demo-all%20six%20layouts-2b2b2b?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
 </p>
 
 <h3>
-  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest">Download</a> ·
+  <a href="#download">Download</a> ·
   <a href="#install-and-run">Quick start</a> ·
   <a href="#layouts">Layouts</a> ·
   <a href="#how-it-works">How it works</a> ·
@@ -62,13 +66,15 @@ git clone https://github.com/mu-ki/claude-usage-pebble.git && cd claude-usage-pe
 
 ## Download
 
-Grab the latest build from the **[latest release](https://github.com/mu-ki/claude-usage-pebble/releases/latest)**. Older versions and betas are on the [Releases page](https://github.com/mu-ki/claude-usage-pebble/releases).
+Each link downloads the newest version straight away:
 
-| OS | File to download |
-|---|---|
-| Windows | `claude-usage-pebble-<version>-win-x64.exe` (portable, no installer) |
-| macOS | `claude-usage-pebble-<version>-mac-universal.dmg`, one file that runs natively on both Apple silicon (M1 and later) and Intel Macs |
-| Linux | `claude-usage-pebble-<version>-linux-x86_64.AppImage` |
+| OS | Download | Notes |
+|---|---|---|
+| Windows 10/11 | [**claude-usage-pebble-win-x64.exe**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64.exe) | Portable, no installer. Just run it. |
+| macOS 12+ | [**claude-usage-pebble-mac-universal.dmg**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-mac-universal.dmg) | One file for both Apple silicon (M1 and later) and Intel Macs. |
+| Linux (x86_64) | [**claude-usage-pebble-linux-x86_64.AppImage**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-linux-x86_64.AppImage) | Runs on most distros. |
+
+Release notes, checksums and older versions are on the [Releases page](https://github.com/mu-ki/claude-usage-pebble/releases).
 
 The builds are not code-signed yet (see [Code signing policy](#code-signing-policy)), so your OS will warn you the first time:
 
@@ -77,14 +83,14 @@ The builds are not code-signed yet (see [Code signing policy](#code-signing-poli
   - macOS 15 (Sequoia) and later: open **System Settings → Privacy & Security**, scroll down, click **Open Anyway** next to "Claude Usage Pebble", and confirm.
   - macOS 14 and earlier: right-click the app → **Open**, then **Open** again.
   - Either version, from Terminal: `xattr -dr com.apple.quarantine "/Applications/Claude Usage Pebble.app"`.
-- **Linux:** make the file executable first: `chmod +x claude-usage-pebble-*.AppImage`, then run it.
+- **Linux:** make the file executable first: `chmod +x claude-usage-pebble-linux-x86_64.AppImage`, then run it.
 
 ### Verify your download
 
 Every release file is built by [GitHub Actions](.github/workflows/release.yml) straight from this repository, and GitHub signs a [build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) for it. To check that a file really came from this repo's workflow (needs the [GitHub CLI](https://cli.github.com)):
 
 ```bash
-gh attestation verify claude-usage-pebble-1.0.0-win-x64.exe --repo mu-ki/claude-usage-pebble
+gh attestation verify claude-usage-pebble-win-x64.exe --repo mu-ki/claude-usage-pebble
 ```
 
 Each release also has a `SHA256SUMS.txt`. Compare it with `sha256sum <file>` (Linux), `shasum -a 256 <file>` (macOS) or `Get-FileHash <file>` (Windows PowerShell).
