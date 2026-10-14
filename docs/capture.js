@@ -41,7 +41,7 @@ async function screenshots() {
 // Frames are rendered deterministically by pausing each CSS animation at a chosen time.
 const GIFS = {
   // The critter is the README's hero, so give it calm numbers: it smiles below 50%.
-  critter: { pct: '12,28,18', target: '.buddy ellipse', swing: true },
+  critter: { pct: '12,28,18', target: '.buddy ellipse', swing: true, css: '.critter .buddy { width: 150px !important; height: auto !important; }' }, // enlarged for the GIF only
   pill: { target: '.sum' },
   dot: { target: '.dot' },
   rings: { target: '.ringrow' },
@@ -89,12 +89,13 @@ async function snap(w, js) {
   return { rgba, width, height };
 }
 
-async function demoGif(layout, { pct, target, swing }) {
+async function demoGif(layout, { pct, target, swing, css = '' }) {
   const query = pct ? { layout, pct } : { layout };
 
   // Size the scene to fit the expanded layout with some breathing room.
   const m = new BrowserWindow({ show: false, width: 800, height: 900, webPreferences: { offscreen: true } });
   await m.loadFile(widget, { query: { ...query, open: '1' } });
+  if (css) await m.webContents.insertCSS(css);
   await wait(400);
   const [ow, oh] = await m.webContents.executeJavaScript(ROOT_SIZE);
   m.destroy();
@@ -104,7 +105,7 @@ async function demoGif(layout, { pct, target, swing }) {
     show: false, width: W * SCALE, height: H * SCALE, frame: false,
     backgroundColor: '#22272e', webPreferences: { offscreen: true, zoomFactor: SCALE },
   });
-  const load = async (q) => { await w.loadFile(widget, { query: q }); await w.webContents.insertCSS(SCENE_CSS); await wait(500); };
+  const load = async (q) => { await w.loadFile(widget, { query: q }); await w.webContents.insertCSS(SCENE_CSS + css); await wait(500); };
   const frames = [];
   const add = async (js, delay) => frames.push({ ...(await snap(w, js)), delay });
 
