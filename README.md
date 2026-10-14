@@ -10,18 +10,43 @@ Pick from six layouts, from a 30px dot to a little critter hanging off the top o
 
 Right-click the widget → **Layout** to switch. Your choice and position are remembered.
 
-| Layout | Collapsed | Click to expand |
-|---|---|---|
-| **Classic bar** | Slim tab: `Session 34% · Week 61%` | Pull-down drawer with every limit |
-| **Tiny dot** | 30px ring that fills with session usage | Card with every limit |
-| **Hanging critter** | A creature dangling on a thread. It drops lower as the week fills up, and its face goes from happy to worried | A sign hangs below it with the details |
-| **Rings** | One ring gauge per limit, always visible | Adds reset times |
-| **Battery** | How much of the session is *left*, like a phone battery | Every limit |
-| **Terminal** | Monospace status line: `❯ claude 5h ██░░ 34% │ 7d ███░ 61%` | ASCII bars with reset times |
+<table>
+  <tr><th>Layout</th><th>Collapsed</th><th>Click to expand</th></tr>
+  <tr>
+    <td><b>Classic bar</b><br>A slim tab at the top of the screen. Click to pull down the drawer.</td>
+    <td><img src="docs/screenshots/pill.png" width="300" alt="Classic bar, collapsed"></td>
+    <td><img src="docs/screenshots/pill-open.png" width="300" alt="Classic bar, expanded"></td>
+  </tr>
+  <tr>
+    <td><b>Tiny dot</b><br>A 30px ring that fills with session usage.</td>
+    <td><img src="docs/screenshots/dot.png" width="30" alt="Tiny dot, collapsed"></td>
+    <td><img src="docs/screenshots/dot-open.png" width="250" alt="Tiny dot, expanded"></td>
+  </tr>
+  <tr>
+    <td><b>Hanging critter</b><br>Dangles on a thread, hangs lower as the week fills up, and looks worried above 80%.</td>
+    <td><img src="docs/screenshots/critter.png" width="84" alt="Hanging critter, collapsed"></td>
+    <td><img src="docs/screenshots/critter-open.png" width="250" alt="Hanging critter, expanded"></td>
+  </tr>
+  <tr>
+    <td><b>Rings</b><br>One gauge per limit, always visible.</td>
+    <td><img src="docs/screenshots/rings.png" width="184" alt="Rings, collapsed"></td>
+    <td><img src="docs/screenshots/rings-open.png" width="270" alt="Rings, expanded"></td>
+  </tr>
+  <tr>
+    <td><b>Battery</b><br>How much of the session is <i>left</i>, like a phone battery.</td>
+    <td><img src="docs/screenshots/battery.png" width="124" alt="Battery, collapsed"></td>
+    <td><img src="docs/screenshots/battery-open.png" width="260" alt="Battery, expanded"></td>
+  </tr>
+  <tr>
+    <td><b>Terminal</b><br>A monospace status line for the command-line crowd.</td>
+    <td><img src="docs/screenshots/terminal.png" width="290" alt="Terminal, collapsed"></td>
+    <td><img src="docs/screenshots/terminal-open.png" width="355" alt="Terminal, expanded"></td>
+  </tr>
+</table>
 
-Bars turn amber at 75% and red at 90%.
+Bars turn amber at 75% and red at 90%. Screenshots use sample data.
 
-To preview every layout with sample data, serve the folder (for example `npx serve .`) and open `docs/gallery.html`. Or open `widget.html?layout=critter&open` directly.
+To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate these images.
 
 ## Install and run
 
@@ -73,6 +98,7 @@ main.js          window, layout menu, settings, fetching usage, sign-in, start a
 preload.js       narrow bridge between the page and the main process
 widget.html      all six layouts (plain HTML/CSS/JS, no build step)
 docs/gallery.html  preview of every layout with sample data
+docs/capture.js    generates docs/screenshots (npm run screenshots)
 ```
 
 ### Adding a layout
