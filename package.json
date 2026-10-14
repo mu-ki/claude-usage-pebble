@@ -1,6 +1,6 @@
 {
   "name": "claude-usage-pebble",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
   "main": "main.js",
   "scripts": {
@@ -20,7 +20,9 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
@@ -28,7 +30,9 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["universal"]
+          "arch": [
+            "universal"
+          ]
         }
       ],
       "category": "public.app-category.utilities",

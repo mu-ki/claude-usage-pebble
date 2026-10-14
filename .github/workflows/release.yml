@@ -76,6 +76,8 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Claude Usage Pebble ${{ github.ref_name }}
           generate_release_notes: true
+          # Tags like v1.0.0-beta are published as pre-releases.
+          prerelease: ${{ contains(github.ref_name, '-') }}
           fail_on_unmatched_files: true
           files: |
             release/*.exe
