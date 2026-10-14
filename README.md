@@ -54,6 +54,37 @@ git clone https://github.com/mu-ki/claude-usage-pebble.git && cd claude-usage-pe
 | 🔒 **Private by design** | Talks only to claude.ai. No server, no analytics, no telemetry. |
 | 💻 **Cross-platform** | Windows, macOS and Linux, from one small Electron app. |
 
+## Download
+
+Grab the latest build from the **[Releases page](https://github.com/mu-ki/claude-usage-pebble/releases/latest)**:
+
+| OS | File to download |
+|---|---|
+| Windows | `claude-usage-pebble-<version>-win-x64.exe` (portable, no installer) |
+| macOS | `claude-usage-pebble-<version>-mac-universal.dmg`, one file that runs natively on both Apple silicon (M1 and later) and Intel Macs |
+| Linux | `claude-usage-pebble-<version>-linux-x86_64.AppImage` |
+
+The builds are not code-signed yet (see [Code signing policy](#code-signing-policy)), so your OS will warn you the first time:
+
+- **Windows:** SmartScreen says "Windows protected your PC". Click **More info → Run anyway**.
+- **macOS:** open the DMG and drag the app to Applications. The first time you open it, macOS blocks it.
+  - macOS 15 (Sequoia) and later: open **System Settings → Privacy & Security**, scroll down, click **Open Anyway** next to "Claude Usage Pebble", and confirm.
+  - macOS 14 and earlier: right-click the app → **Open**, then **Open** again.
+  - Either version, from Terminal: `xattr -dr com.apple.quarantine "/Applications/Claude Usage Pebble.app"`.
+- **Linux:** make the file executable first: `chmod +x claude-usage-pebble-*.AppImage`, then run it.
+
+### Verify your download
+
+Every release file is built by [GitHub Actions](.github/workflows/release.yml) straight from this repository, and GitHub signs a [build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) for it. To check that a file really came from this repo's workflow (needs the [GitHub CLI](https://cli.github.com)):
+
+```bash
+gh attestation verify claude-usage-pebble-1.0.0-win-x64.exe --repo mu-ki/claude-usage-pebble
+```
+
+Each release also has a `SHA256SUMS.txt`. Compare it with `sha256sum <file>` (Linux), `shasum -a 256 <file>` (macOS) or `Get-FileHash <file>` (Windows PowerShell).
+
+Prefer to build it yourself? See [Install and run](#install-and-run) below.
+
 ## Layouts
 
 Right-click the widget → **Layout** to switch. Your choice and position are remembered.
@@ -157,6 +188,18 @@ The window resizes itself to fit whatever your layout renders.
 ## Contributing
 
 Issues and pull requests are welcome. New layouts are especially fun to add, see [Adding a layout](#adding-a-layout). If claude.ai changes and the widget starts showing an error, please [open an issue](https://github.com/mu-ki/claude-usage-pebble/issues).
+
+## Code signing policy
+
+Windows builds are set to be signed through the SignPath Foundation open-source program: free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org). Until that application is approved, releases are unsigned. macOS builds are not signed or notarized.
+
+- Committers and reviewers: [repository collaborators](https://github.com/mu-ki/claude-usage-pebble/graphs/contributors). Pull requests from anyone else are reviewed before merging.
+- Approvers: [@mu-ki](https://github.com/mu-ki) (repository owner)
+- Every release file is built by GitHub Actions from the tagged source and carries a build provenance attestation (see [Verify your download](#verify-your-download)).
+
+### Privacy
+
+This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. The only site it talks to is claude.ai, which you sign in to yourself, to read your own usage numbers. There is no analytics, telemetry or server of our own (see [How it works](#how-it-works)).
 
 ## Credits
 

@@ -1,6 +1,6 @@
 {
   "name": "claude-usage-pebble",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.2",
   "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
   "main": "main.js",
   "scripts": {
@@ -11,16 +11,31 @@
   "build": {
     "appId": "com.claudeusagepebble.app",
     "productName": "Claude Usage Pebble",
+    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
     "files": [
       "main.js",
       "preload.js",
       "widget.html"
     ],
     "win": {
-      "target": "portable"
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     },
     "mac": {
-      "target": "dmg",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
       "category": "public.app-category.utilities",
       "extendInfo": {
         "LSUIElement": true
