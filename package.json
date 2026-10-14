@@ -1,6 +1,6 @@
 {
   "name": "claude-usage-pebble",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,12 @@
     ],
     "win": {
       "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
         {
           "target": "portable",
           "arch": [
@@ -44,6 +50,15 @@
     "linux": {
       "target": "AppImage",
       "category": "Utility"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Claude Usage Pebble",
+      "artifactName": "${name}-${os}-${arch}-setup.${ext}"
     }
   },
   "devDependencies": {

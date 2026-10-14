@@ -26,7 +26,7 @@ Six layouts, from a 30px dot to a little critter hanging off the top of your scr
 </p>
 
 <p>
-  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64.exe"><img alt="Download for Windows" src="https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white"></a>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64-setup.exe"><img alt="Download for Windows" src="https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white"></a>
   <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-mac-universal.dmg"><img alt="Download for macOS" src="https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple&logoColor=white"></a>
   <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-linux-x86_64.AppImage"><img alt="Download for Linux" src="https://img.shields.io/badge/Download-Linux-E95420?style=for-the-badge&logo=linux&logoColor=white"></a>
 </p>
@@ -70,7 +70,8 @@ Each link downloads the newest version straight away:
 
 | OS | Download | Notes |
 |---|---|---|
-| Windows 10/11 | [**claude-usage-pebble-win-x64.exe**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64.exe) | Portable, no installer. Just run it. |
+| Windows 10/11 | [**claude-usage-pebble-win-x64-setup.exe**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64-setup.exe) | **Installer (recommended).** Installs for your user only (no admin needed), adds Start-menu and desktop shortcuts, starts instantly, and uninstalls from **Settings → Apps**. |
+| Windows 10/11, portable | [claude-usage-pebble-win-x64.exe](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-win-x64.exe) | No install: just run it, e.g. from a USB stick. Unpacks itself on every launch, so it takes 5–15 seconds to appear. |
 | macOS 12+ | [**claude-usage-pebble-mac-universal.dmg**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-mac-universal.dmg) | One file for both Apple silicon (M1 and later) and Intel Macs. |
 | Linux (x86_64) | [**claude-usage-pebble-linux-x86_64.AppImage**](https://github.com/mu-ki/claude-usage-pebble/releases/latest/download/claude-usage-pebble-linux-x86_64.AppImage) | Runs on most distros. |
 
@@ -78,7 +79,7 @@ Release notes, checksums and older versions are on the [Releases page](https://g
 
 The builds are not code-signed yet (see [Code signing policy](#code-signing-policy)), so your OS will warn you the first time:
 
-- **Windows:** SmartScreen says "Windows protected your PC". Click **More info → Run anyway**.
+- **Windows:** SmartScreen says "Windows protected your PC" (for the installer or the portable exe). Click **More info → Run anyway**.
 - **macOS:** open the DMG and drag the app to Applications. The first time you open it, macOS blocks it.
   - macOS 15 (Sequoia) and later: open **System Settings → Privacy & Security**, scroll down, click **Open Anyway** next to "Claude Usage Pebble", and confirm.
   - macOS 14 and earlier: right-click the app → **Open**, then **Open** again.
@@ -90,7 +91,7 @@ The builds are not code-signed yet (see [Code signing policy](#code-signing-poli
 Every release file is built by [GitHub Actions](.github/workflows/release.yml) straight from this repository, and GitHub signs a [build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) for it. To check that a file really came from this repo's workflow (needs the [GitHub CLI](https://cli.github.com)):
 
 ```bash
-gh attestation verify claude-usage-pebble-win-x64.exe --repo mu-ki/claude-usage-pebble
+gh attestation verify claude-usage-pebble-win-x64-setup.exe --repo mu-ki/claude-usage-pebble
 ```
 
 Each release also has a `SHA256SUMS.txt`. Compare it with `sha256sum <file>` (Linux), `shasum -a 256 <file>` (macOS) or `Get-FileHash <file>` (Windows PowerShell).
@@ -166,7 +167,7 @@ This builds for the OS you run it on:
 
 | OS | Output in `dist/` |
 |---|---|
-| Windows | Portable `.exe` |
+| Windows | Installer (`-setup.exe`) and portable `.exe` |
 | macOS | `.dmg` (runs as a menu-bar-style app with no Dock icon) |
 | Linux | `.AppImage` |
 
