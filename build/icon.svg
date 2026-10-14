@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Claude Usage Pebble app icon: the smiling hanging critter on a dark rounded tile.
+       Source for build/icon.png (run `npm run icon`); electron-builder makes the .ico/.icns from that PNG. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#34342f"/>
+      <stop offset="1" stop-color="#1c1c1a"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#f08e6c"/>
+      <stop offset="1" stop-color="#d97757"/>
+    </radialGradient>
+  </defs>
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="url(#tile)"/>
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="4"/>
+  <!-- thread -->
+  <line x1="512" y1="32" x2="512" y2="300" stroke="#a5a59f" stroke-width="14" stroke-linecap="round"/>
+  <!-- critter: the widget's critter drawing (centered at 42,40) scaled up 13x -->
+  <g transform="translate(512 560) scale(13) translate(-42 -40)">
+    <g stroke="#b85f43" stroke-width="2.6" fill="none" stroke-linecap="round">
+      <path d="M22 32 q-8 -4 -12 4"/><path d="M22 44 q-8 2 -12 10"/>
+      <path d="M62 32 q8 -4 12 4"/><path d="M62 44 q8 2 12 10"/>
+    </g>
+    <ellipse cx="42" cy="40" rx="22" ry="20" fill="url(#shine)"/>
+    <ellipse cx="29" cy="43" rx="3.5" ry="2" fill="#f2a58c" opacity=".8"/>
+    <ellipse cx="55" cy="43" rx="3.5" ry="2" fill="#f2a58c" opacity=".8"/>
+    <circle cx="35" cy="36" r="2.9" fill="#2a1a14"/><circle cx="49" cy="36" r="2.9" fill="#2a1a14"/>
+    <circle cx="36" cy="35" r="1" fill="#fff"/><circle cx="50" cy="35" r="1" fill="#fff"/>
+    <path d="M36 45 q6 6 12 0" stroke="#2a1a14" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
