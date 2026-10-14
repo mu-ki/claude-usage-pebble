@@ -7,7 +7,7 @@
 **Your Claude plan usage, always one glance away.**
 
 A tiny always-on-top desktop widget that shows your current session, this week, and any per-model weekly limits.<br>
-Six layouts, from a 30px dot to a little critter hanging off the top of your screen.
+16 layouts: compact widgets, plus little characters that hang from the top, peek in from the side or sit on the bottom of your screen.
 
 <p>
   <a href="#download"><img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows11&logoColor=white"></a>
@@ -59,8 +59,8 @@ git clone https://github.com/mu-ki/claude-usage-pebble.git && cd claude-usage-pe
 |---|---|
 | 🪶 **Tiny and out of the way** | Sits on top of every window, takes a few pixels, drag it anywhere. |
 | 📊 **Every limit at once** | Current session, this week, and per-model weekly limits (for example Fable). |
-| 🎨 **Six layouts** | Bar, dot, critter, rings, battery or terminal. Switch with a right-click. |
-| 🚦 **Warns you early** | Bars turn amber at 75% and red at 90%. The critter gets worried above 80%. |
+| 🎨 **16 layouts** | Five compact widgets and 11 characters that hang from the top, peek in from the side or sit on the bottom of your screen. Switch with a right-click. |
+| 🚦 **Warns you early** | At 80%, 90% and 100% a speech bubble pops up and the widget nudges you. Characters look worried, and bars turn amber at 75% and red at 90%. |
 | 🔒 **Private by design** | Talks only to claude.ai. No server, no analytics, no telemetry. |
 | 💻 **Cross-platform** | Windows, macOS and Linux, from one small Electron app. |
 
@@ -138,6 +138,47 @@ Bars turn amber at 75% and red at 90%. Demos use sample data.
 
 To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate the demo GIFs and the still images in `docs/screenshots`.
 
+### More characters
+
+Ten more characters join the critter. They all smile when you're fine, look unsure past 50% and worried past 80%. Ones that peek from the side or sit on the bottom snap to that screen edge and slide along it when you drag them.
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" valign="bottom"><img src="docs/screenshots/bat.png" width="90" alt="Sleepy bat"><br><b>Sleepy bat</b><br><sub>Hangs by its feet; spreads its wings above 80%.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/sloth.png" width="110" alt="Sloth on a branch"><br><b>Sloth on a branch</b><br><sub>Holds on with both arms and sways slowly.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/yoyo.png" width="80" alt="Yo-yo"><br><b>Yo-yo</b><br><sub>Spins; the string gets longer as the week fills up.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/lantern.png" width="90" alt="Paper lantern"><br><b>Paper lantern</b><br><sub>Glows brighter with use; turns red and flickers above 80%.</sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="bottom"><img src="docs/screenshots/cat.png" width="87" alt="Peeking cat"><br><b>Peeking cat</b><br><sub>Peeks in from the <b>right</b> edge.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/octopus.png" width="95" alt="Octopus"><br><b>Octopus</b><br><sub>Waves its tentacles from the <b>right</b> edge.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/ghost.png" width="75" alt="Shy ghost"><br><b>Shy ghost</b><br><sub>Floats in from the <b>left</b> edge.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/cactus.png" width="100" alt="Cactus"><br><b>Cactus</b><br><sub>Sits on the <b>bottom</b>. Flowers when you're fine, droops above 80%.</sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="bottom"><img src="docs/screenshots/robot.png" width="100" alt="Robot"><br><b>Robot</b><br><sub>Sits on the <b>bottom</b>. Antenna lamp goes green, amber, red.</sub></td>
+    <td align="center" valign="bottom"><img src="docs/screenshots/fishbowl.png" width="100" alt="Fish bowl"><br><b>Fish bowl</b><br><sub>Sits on the <b>bottom</b>. The water is the session you have left.</sub></td>
+  </tr>
+</table>
+
+</div>
+
+Click any of them and the details card drops down (or pops up, for the ones on the bottom).
+
+## Usage alerts
+
+<p align="center">
+  <img src="docs/screenshots/alert-demo.gif" width="293" alt="The critter is calm; when Fable passes 80% a speech bubble pops up and the critter nudges for attention; clicking Got it dismisses the bubble">
+</p>
+
+When any limit reaches **80%**, **90%** or **100%**, a speech bubble pops up next to the widget and the widget gives a little nudge:
+
+- **Got it** dismisses it. You won't hear about that level again until the limit resets, but the next level still alerts.
+- **Details** opens the full usage card.
+- Turn alerts off with right-click → **Usage alerts**.
+
 ## Install and run
 
 You need [Node.js](https://nodejs.org) 18 or later.
@@ -154,8 +195,8 @@ On first run the widget says **Click to sign in**. Click it, sign in to claude.a
 ### Controls
 
 - **Click** the widget to expand or collapse it
-- **Drag** to move it anywhere on screen
-- **Right-click** for Refresh now, Layout, Sign in / switch account, Start at login, and Quit
+- **Drag** to move it. Top widgets go anywhere; side and bottom characters slide along their screen edge
+- **Right-click** for Refresh now, Layout, Usage alerts, Sign in / switch account, Start at login, and Quit
 
 ## Build an app file
 
@@ -186,7 +227,7 @@ The data comes from claude.ai's web app, not a public API, so a claude.ai update
 ```
 main.js          window, layout menu, settings, fetching usage, sign-in, start at login
 preload.js       narrow bridge between the page and the main process
-widget.html      all six layouts (plain HTML/CSS/JS, no build step)
+widget.html      all 16 layouts and the usage alerts (plain HTML/CSS/JS, no build step)
 docs/gallery.html  preview of every layout with sample data
 docs/capture.js    generates docs/screenshots and the demo GIF (npm run screenshots)
 ```
@@ -194,7 +235,10 @@ docs/capture.js    generates docs/screenshots and the demo GIF (npm run screensh
 ### Adding a layout
 
 1. Add a function to the `layouts` object in `widget.html`. It returns HTML for the current `state` and `open` flag. Mark the clickable part with `data-toggle`, and reuse `list()` for the expanded details.
-2. Add `['your-id', 'Your name']` to `LAYOUTS` in `main.js`.
+2. Add `['your-id', 'Your name', 'Menu group']` to `LAYOUTS` in `main.js`.
+3. If it belongs on the side or bottom of the screen, add it to `DOCK` in `widget.html` (`'left'`, `'right'` or `'bottom'`).
+
+Characters can reuse `face()` (eyes and mouth that follow your usage), `tag()` (the session % pill) and `character()` (adds the details card).
 
 The window resizes itself to fit whatever your layout renders.
 

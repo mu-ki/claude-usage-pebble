@@ -1,6 +1,6 @@
 {
   "name": "claude-usage-pebble",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
   "main": "main.js",
   "scripts": {

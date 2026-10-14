@@ -7,6 +7,9 @@ const path = require('path');
 const fs = require('fs');
 
 const LAYOUTS = ['pill', 'dot', 'critter', 'rings', 'battery', 'terminal'];
+// Characters added later; their stills use calm sample numbers so they smile.
+const CHARACTERS = ['bat', 'sloth', 'yoyo', 'lantern', 'cat', 'octopus', 'ghost', 'cactus', 'robot', 'fishbowl'];
+const CALM = '24,38,30';
 const SCALE = 2; // retina-crisp images
 const out = path.join(__dirname, 'screenshots');
 const widget = path.join(__dirname, '..', 'widget.html');
@@ -17,14 +20,17 @@ app.disableHardwareAcceleration();
 app.on('window-all-closed', () => {}); // keep running between captures; we quit when done
 
 async function screenshots() {
-  for (const layout of LAYOUTS) {
+  for (const layout of [...LAYOUTS, ...CHARACTERS]) {
     for (const open of [false, true]) {
       const w = new BrowserWindow({
         show: false, width: 400 * SCALE, height: 520 * SCALE, frame: false, transparent: true,
         backgroundColor: '#00000000', webPreferences: { offscreen: true, zoomFactor: SCALE },
       });
-      await w.loadFile(widget, { query: open ? { layout, open: '1' } : { layout } });
-      await w.webContents.insertCSS('*, *::before, *::after { animation: none !important; transition: none !important; }');
+      const query = { layout, ...(CHARACTERS.includes(layout) ? { pct: CALM } : {}), ...(open ? { open: '1' } : {}) };
+      await w.loadFile(widget, { query });
+      // Freeze animations, and draw the screen edge that side and bottom characters peek from.
+      await w.webContents.insertCSS(`*, *::before, *::after { animation: none !important; transition: none !important; }
+        .wrap.right { border-right: 3px solid #6b7280; } .wrap.left { border-left: 3px solid #6b7280; } .wrap.bottom { border-bottom: 3px solid #6b7280; }`);
       await wait(500); // demo data arrives after 100ms; give layout and fonts time to settle
       const [width, height] = await w.webContents.executeJavaScript(ROOT_SIZE);
       const img = await w.webContents.capturePage({ x: 0, y: 0, width: width * SCALE, height: height * SCALE });
@@ -139,12 +145,64 @@ async function demoGif(layout, { pct, target, swing, css = '' }) {
   console.log(path.relative(process.cwd(), file), `${width}x${height}`, `${frames.length} frames`, `${Math.round(fs.statSync(file).size / 1024)} KB`);
 }
 
+// ---------- usage alert GIF ----------
+// The critter is calm at 74%. Fable crosses 80%: a bubble pops up and the critter nudges for
+// attention. A cursor clicks "Got it", the bubble goes away and things calm down.
+// Every CSS animation is paused at an exact time per frame, so the result is the same on every run.
+const animAt = (seconds) => `document.getAnimations().forEach((a) => { a.pause(); a.currentTime = ${Math.round(seconds * 1000)}; })`;
+
+async function alertGif() {
+  const css = GIFS.critter.css;
+  const before = { layout: 'critter', pct: '45,72,74', alert: '1' };
+  const after = { layout: 'critter', pct: '45,72,86', alert: '1' };
+
+  const m = new BrowserWindow({ show: false, width: 800, height: 900, webPreferences: { offscreen: true } });
+  await m.loadFile(widget, { query: after });
+  await m.webContents.insertCSS(css);
+  await wait(400);
+  const [ow, oh] = await m.webContents.executeJavaScript(ROOT_SIZE);
+  m.destroy();
+  const W = ow + 56, H = oh + 8 + 28;
+
+  const w = new BrowserWindow({
+    show: false, width: W * SCALE, height: H * SCALE, frame: false,
+    backgroundColor: '#22272e', webPreferences: { offscreen: true, zoomFactor: SCALE },
+  });
+  const load = async (q) => { await w.loadFile(widget, { query: q }); await w.webContents.insertCSS(SCENE_CSS + css); await wait(500); };
+  const frames = [];
+  const add = async (js, delay) => frames.push({ ...(await snap(w, js)), delay });
+
+  // 1. Calm: half a swing.
+  await load(before);
+  for (let i = 0; i < 14; i++) await add(animAt(1.4 + i * 0.1), 100);
+  // 2. Fable crosses 80%: the bubble pops (0.25s) and the critter nudges for two 1.4s cycles.
+  await load(after);
+  for (const t of [0, 0.06, 0.12, 0.18]) await add(animAt(t), 50);
+  for (let i = 0; i < 28; i++) await add(animAt(0.25 + i * 0.1), 100);
+  // 3. Click "Got it".
+  await add(`${animAt(0)}; ${cursorAt('[data-act=dismiss]', '')}`, 700);
+  await add(cursorAt('[data-act=dismiss]', 'p1'), 90);
+  await add(cursorAt('[data-act=dismiss]', 'p2'), 90);
+  await add(`document.querySelector('[data-act=dismiss]').click(); document.getElementById('cursor').remove(); ${animAt(1.4)}`, 1600);
+  w.destroy();
+
+  const { width, height } = frames[0];
+  const palette = quantize(Buffer.concat([frames[0].rgba, frames[20].rgba, frames[frames.length - 2].rgba]), 256);
+  const gif = GIFEncoder();
+  for (const fr of frames) gif.writeFrame(applyPalette(fr.rgba, palette), width, height, { palette, delay: fr.delay });
+  gif.finish();
+  const file = path.join(out, 'alert-demo.gif');
+  fs.writeFileSync(file, gif.bytes());
+  console.log(path.relative(process.cwd(), file), `${width}x${height}`, `${frames.length} frames`, `${Math.round(fs.statSync(file).size / 1024)} KB`);
+}
+
 app.whenReady().then(async () => {
   fs.mkdirSync(out, { recursive: true });
   const only = process.argv.find((a) => a.startsWith('--only='));
   try {
     if (!only || only === '--only=png') await screenshots();
     if (!only || only === '--only=gif') for (const [layout, opts] of Object.entries(GIFS)) await demoGif(layout, opts);
+    if (!only || only === '--only=gif' || only === '--only=alert') await alertGif();
   } catch (e) {
     console.error(e);
     process.exitCode = 1;

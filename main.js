@@ -9,13 +9,24 @@ const os = require('os');
 const USAGE_URL = 'https://claude.ai/settings/usage';
 const PARTITION = 'persist:claude';
 const POLL_MS = 5 * 60 * 1000;
+// [id, menu label, menu group]. Each layout's screen edge (top, bottom, left, right) is defined in widget.html.
 const LAYOUTS = [
-  ['pill', 'Classic bar'],
-  ['dot', 'Tiny dot'],
-  ['critter', 'Hanging critter'],
-  ['rings', 'Rings'],
-  ['battery', 'Battery'],
-  ['terminal', 'Terminal'],
+  ['pill', 'Classic bar', 'Widgets'],
+  ['dot', 'Tiny dot', 'Widgets'],
+  ['rings', 'Rings', 'Widgets'],
+  ['battery', 'Battery', 'Widgets'],
+  ['terminal', 'Terminal', 'Widgets'],
+  ['critter', 'Hanging critter', 'Hanging from the top'],
+  ['bat', 'Sleepy bat', 'Hanging from the top'],
+  ['sloth', 'Sloth on a branch', 'Hanging from the top'],
+  ['yoyo', 'Yo-yo', 'Hanging from the top'],
+  ['lantern', 'Paper lantern', 'Hanging from the top'],
+  ['cat', 'Peeking cat (right edge)', 'Peeking from the side'],
+  ['octopus', 'Octopus (right edge)', 'Peeking from the side'],
+  ['ghost', 'Shy ghost (left edge)', 'Peeking from the side'],
+  ['cactus', 'Cactus', 'Sitting on the bottom'],
+  ['robot', 'Robot', 'Sitting on the bottom'],
+  ['fishbowl', 'Fish bowl', 'Sitting on the bottom'],
 ];
 
 app.disableHardwareAcceleration(); // a small widget doesn't need a GPU process
@@ -27,30 +38,51 @@ let busy = false;
 let state = { status: 'loading', bars: [] };
 
 // ---------- settings: layout + where the widget sits ----------
-// The position is an anchor (horizontal center + top edge) so the widget grows and shrinks around
-// the same spot whatever the layout or drawer size.
+// Each screen edge ("dock") keeps its own anchor point, so the widget grows and shrinks around the
+// same spot whatever the drawer size:
+//   top:    x = horizontal center, y = top edge        bottom: x = horizontal center, y = bottom edge
+//   right:  x = right edge,        y = top edge        left:   x = left edge,         y = top edge
 const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
 let settings = {};
+let dock = 'top'; // reported by the page for the current layout
 
 function loadSettings() {
   try { settings = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); } catch { settings = {}; }
   if (!LAYOUTS.some(([id]) => id === settings.layout)) settings.layout = 'pill';
-  const a = settings.anchor;
-  const onScreen = a && screen.getAllDisplays().some(({ workArea: w }) => a.cx >= w.x && a.cx < w.x + w.width && a.y >= w.y && a.y < w.y + w.height);
-  if (!onScreen) {
-    const wa = screen.getPrimaryDisplay().workArea;
-    settings.anchor = { cx: Math.round(wa.x + wa.width / 2), y: wa.y }; // top-center of the screen
-  }
+  if (settings.alerts === undefined) settings.alerts = true;
+  settings.anchors = settings.anchors || {};
+  if (settings.anchor) { settings.anchors.top = { x: settings.anchor.cx, y: settings.anchor.y }; delete settings.anchor; } // older versions
 }
 
 function saveSettings() {
   try { fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2)); } catch {}
 }
 
+function anchorFor(d) {
+  const a = settings.anchors[d];
+  const onScreen = a && screen.getAllDisplays().some(({ workArea: w }) => a.x >= w.x && a.x <= w.x + w.width && a.y >= w.y && a.y <= w.y + w.height);
+  if (onScreen) return a;
+  const wa = screen.getPrimaryDisplay().workArea;
+  const cx = Math.round(wa.x + wa.width / 2), third = Math.round(wa.y + wa.height * 0.3);
+  return { top: { x: cx, y: wa.y }, bottom: { x: cx, y: wa.y + wa.height }, right: { x: wa.x + wa.width, y: third }, left: { x: wa.x, y: third } }[d];
+}
+
+// Window bounds for a widget of size w×h docked at d, kept inside the screen's work area.
+function boundsFor(d, w, h) {
+  const a = anchorFor(d);
+  const wa = screen.getDisplayNearestPoint({ x: Math.round(a.x), y: Math.round(a.y) }).workArea;
+  let x = d === 'right' ? a.x - w : d === 'left' ? a.x : a.x - w / 2;
+  let y = d === 'bottom' ? a.y - h : a.y;
+  x = Math.min(Math.max(Math.round(x), wa.x), wa.x + wa.width - w);
+  y = Math.min(Math.max(Math.round(y), wa.y), wa.y + wa.height - h);
+  return { x, y, width: w, height: h };
+}
+
 // ---------- widget window ----------
 function createWidget() {
+  const a = anchorFor('top');
   win = new BrowserWindow({
-    x: settings.anchor.cx - 20, y: settings.anchor.y, width: 40, height: 40,
+    x: a.x - 20, y: a.y, width: 40, height: 40,
     frame: false, transparent: true, resizable: false, alwaysOnTop: true, skipTaskbar: true,
     hasShadow: false, fullscreenable: false, maximizable: false, minimizable: false, show: false,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), backgroundThrottling: false },
@@ -66,38 +98,50 @@ function send() {
 }
 
 function sendConfig() {
-  if (win && !win.isDestroyed()) win.webContents.send('config', { layout: settings.layout });
+  if (win && !win.isDestroyed()) win.webContents.send('config', { layout: settings.layout, alerts: settings.alerts });
 }
 
 // The page measures its layout and asks for a window that fits; the window is shown on the first fit.
-ipcMain.on('size', (_e, w, h) => {
-  w = Math.max(10, Math.round(w)); h = Math.max(10, Math.round(h));
-  const { cx, y } = settings.anchor;
-  const wa = screen.getDisplayNearestPoint({ x: cx, y }).workArea;
-  const x = Math.min(Math.max(Math.round(cx - w / 2), wa.x), wa.x + wa.width - w);
-  win.setBounds({ x, y: Math.min(Math.max(y, wa.y), wa.y + wa.height - h), width: w, height: h });
+ipcMain.on('size', (_e, w, h, d) => {
+  dock = ['top', 'bottom', 'left', 'right'].includes(d) ? d : 'top';
+  win.setBounds(boundsFor(dock, Math.max(10, Math.round(w)), Math.max(10, Math.round(h))));
   if (!win.isVisible()) win.showInactive();
 });
+// Dragging: top widgets move freely; side and bottom ones slide along their edge.
 ipcMain.on('move', (_e, x, y) => {
   const b = win.getBounds();
+  if (dock === 'left' || dock === 'right') x = b.x;
+  if (dock === 'bottom') y = b.y;
   win.setBounds({ x: Math.round(x), y: Math.round(y), width: b.width, height: b.height });
 });
 ipcMain.on('moved', () => {
   const b = win.getBounds();
-  settings.anchor = { cx: Math.round(b.x + b.width / 2), y: b.y };
+  settings.anchors[dock] = {
+    top: { x: b.x + b.width / 2, y: b.y },
+    bottom: { x: b.x + b.width / 2, y: b.y + b.height },
+    right: { x: b.x + b.width, y: b.y },
+    left: { x: b.x, y: b.y },
+  }[dock];
   saveSettings();
 });
 ipcMain.on('refresh', () => fetchUsage());
 ipcMain.on('login', () => openLogin());
 ipcMain.on('menu', () => {
+  const groups = [...new Set(LAYOUTS.map((l) => l[2]))];
+  const layoutMenu = groups.flatMap((g, i) => [
+    ...(i ? [{ type: 'separator' }] : []),
+    { label: g, enabled: false },
+    ...LAYOUTS.filter((l) => l[2] === g).map(([id, label]) => ({
+      label, type: 'radio', checked: settings.layout === id,
+      click: () => { settings.layout = id; saveSettings(); sendConfig(); },
+    })),
+  ]);
   Menu.buildFromTemplate([
     { label: 'Refresh now', click: fetchUsage },
+    { label: 'Layout', submenu: layoutMenu },
     {
-      label: 'Layout',
-      submenu: LAYOUTS.map(([id, label]) => ({
-        label, type: 'radio', checked: settings.layout === id,
-        click: () => { settings.layout = id; saveSettings(); sendConfig(); },
-      })),
+      label: 'Usage alerts (80%, 90%, 100%)', type: 'checkbox', checked: settings.alerts,
+      click: (i) => { settings.alerts = i.checked; saveSettings(); sendConfig(); },
     },
     { label: 'Sign in / switch account', click: openLogin },
     { label: 'Start at login', type: 'checkbox', checked: autostartGet(), click: (i) => autostartSet(i.checked) },
