@@ -10,9 +10,9 @@ A tiny always-on-top desktop widget that shows your current session, this week, 
 Six layouts, from a 30px dot to a little critter hanging off the top of your screen.
 
 <p>
-  <a href="#install-and-run"><img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows11&logoColor=white"></a>
-  <a href="#install-and-run"><img alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white"></a>
-  <a href="#install-and-run"><img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black"></a>
+  <a href="#download"><img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows11&logoColor=white"></a>
+  <a href="#download"><img alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white"></a>
+  <a href="#download"><img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black"></a>
   <a href="https://www.electronjs.org"><img alt="Electron" src="https://img.shields.io/github/package-json/dependency-version/mu-ki/claude-usage-pebble/dev/electron?style=flat&logo=electron&logoColor=white&label=Electron&color=47848F"></a>
   <a href="https://nodejs.org"><img alt="Node.js 18+" src="https://img.shields.io/badge/Node.js-18%2B-339933?style=flat&logo=nodedotjs&logoColor=white"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/mu-ki/claude-usage-pebble?style=flat&color=f5c518&label=license"></a>
@@ -25,7 +25,13 @@ Six layouts, from a 30px dot to a little critter hanging off the top of your scr
   <a href="#contributing"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-ff69b4?style=flat"></a>
 </p>
 
+<p>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-D97757?style=for-the-badge&logo=github&logoColor=white"></a>
+  <a href="https://mu-ki.github.io/claude-usage-pebble/docs/gallery.html"><img alt="Try the live demo" src="https://img.shields.io/badge/Live%20demo-all%20six%20layouts-2b2b2b?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
+</p>
+
 <h3>
+  <a href="https://github.com/mu-ki/claude-usage-pebble/releases/latest">Download</a> ·
   <a href="#install-and-run">Quick start</a> ·
   <a href="#layouts">Layouts</a> ·
   <a href="#how-it-works">How it works</a> ·
@@ -56,7 +62,7 @@ git clone https://github.com/mu-ki/claude-usage-pebble.git && cd claude-usage-pe
 
 ## Download
 
-Grab the latest build from the **[Releases page](https://github.com/mu-ki/claude-usage-pebble/releases/latest)**:
+Grab the latest build from the **[latest release](https://github.com/mu-ki/claude-usage-pebble/releases/latest)**. Older versions and betas are on the [Releases page](https://github.com/mu-ki/claude-usage-pebble/releases).
 
 | OS | File to download |
 |---|---|
