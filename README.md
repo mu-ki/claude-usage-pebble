@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/screenshots/critter-demo.gif" width="260" alt="The hanging critter dropping lower as weekly usage fills up">
+<img src="docs/screenshots/critter-demo.gif" width="300" alt="A smiling critter swinging from the top of the screen; a click drops a sign showing session, weekly and Fable usage">
 
 # Claude Usage Pebble
 
@@ -61,44 +61,38 @@ Right-click the widget → **Layout** to switch. Your choice and position are re
 <div align="center">
 
 <table>
-  <tr><th>Layout</th><th>Collapsed</th><th>Click to expand</th></tr>
+  <tr><th>Layout</th><th>Click it and the details drop down</th></tr>
   <tr>
-    <td><b>Classic bar</b><br>A slim tab at the top of the screen. Click to pull down the drawer.</td>
-    <td><img src="docs/screenshots/pill.png" width="300" alt="Classic bar, collapsed"></td>
-    <td><img src="docs/screenshots/pill-open.png" width="300" alt="Classic bar, expanded"></td>
+    <td><b>Classic bar</b><br>A slim tab at the top of the screen showing session and week at a glance.</td>
+    <td><img src="docs/screenshots/pill-demo.gif" width="357" alt="Classic bar: a slim tab is clicked and a drawer with every limit drops down"></td>
   </tr>
   <tr>
-    <td><b>Tiny dot</b><br>A 30px ring that fills with session usage.</td>
-    <td><img src="docs/screenshots/dot.png" width="30" alt="Tiny dot, collapsed"></td>
-    <td><img src="docs/screenshots/dot-open.png" width="250" alt="Tiny dot, expanded"></td>
+    <td><b>Tiny dot</b><br>A 30px ring that fills with session usage. The smallest option.</td>
+    <td><img src="docs/screenshots/dot-demo.gif" width="307" alt="Tiny dot: a small ring is clicked and a card with every limit drops down"></td>
   </tr>
   <tr>
-    <td><b>Hanging critter</b><br>Dangles on a thread, hangs lower as the week fills up, and looks worried above 80%.</td>
-    <td><img src="docs/screenshots/critter.png" width="84" alt="Hanging critter, collapsed"></td>
-    <td><img src="docs/screenshots/critter-open.png" width="250" alt="Hanging critter, expanded"></td>
+    <td><b>Hanging critter</b><br>Swings on a thread, hangs lower as the week fills up, smiles when you're fine and looks worried above 80%.</td>
+    <td><img src="docs/screenshots/critter-demo.gif" width="307" alt="Hanging critter: a smiling critter swings, is clicked, and drops a sign with every limit"></td>
   </tr>
   <tr>
     <td><b>Rings</b><br>One gauge per limit, always visible.</td>
-    <td><img src="docs/screenshots/rings.png" width="184" alt="Rings, collapsed"></td>
-    <td><img src="docs/screenshots/rings-open.png" width="270" alt="Rings, expanded"></td>
+    <td><img src="docs/screenshots/rings-demo.gif" width="327" alt="Rings: three ring gauges are clicked and reset times drop down"></td>
   </tr>
   <tr>
     <td><b>Battery</b><br>How much of the session is <i>left</i>, like a phone battery.</td>
-    <td><img src="docs/screenshots/battery.png" width="124" alt="Battery, collapsed"></td>
-    <td><img src="docs/screenshots/battery-open.png" width="260" alt="Battery, expanded"></td>
+    <td><img src="docs/screenshots/battery-demo.gif" width="317" alt="Battery: a battery icon is clicked and every limit drops down"></td>
   </tr>
   <tr>
     <td><b>Terminal</b><br>A monospace status line for the command-line crowd.</td>
-    <td><img src="docs/screenshots/terminal.png" width="290" alt="Terminal, collapsed"></td>
-    <td><img src="docs/screenshots/terminal-open.png" width="355" alt="Terminal, expanded"></td>
+    <td><img src="docs/screenshots/terminal-demo.gif" width="412" alt="Terminal: a green status line is clicked and text bars with reset times appear"></td>
   </tr>
 </table>
 
 </div>
 
-Bars turn amber at 75% and red at 90%. Screenshots use sample data.
+Bars turn amber at 75% and red at 90%. Demos use sample data.
 
-To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate these images and the demo GIF.
+To preview every layout live, serve the folder (for example `npx serve .`) and open `docs/gallery.html`, or open `widget.html?layout=critter&open` directly. After changing a layout, run `npm run screenshots` to regenerate the demo GIFs and the still images in `docs/screenshots`.
 
 ## Install and run
 

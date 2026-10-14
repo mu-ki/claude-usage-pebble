@@ -86,15 +86,17 @@
 <div id="root"></div>
 <script>
   // Demo mode: opening this file in a normal browser (no Electron bridge) shows sample data.
-  // Pick a layout with ?layout=pill|dot|critter|rings|battery|terminal and add &open to expand it.
+  // Pick a layout with ?layout=pill|dot|critter|rings|battery|terminal, add &open to expand it,
+  // and &pct=session,week,fable to set the sample percentages (default 34,61,82).
   if (!window.widget) {
     const q = new URLSearchParams(location.search), soon = (h) => new Date(Date.now() + h * 3600e3).toISOString();
+    const [s, w, f] = (q.get('pct') || '34,61,82').split(',').map(Number);
     window.widget = {
       onConfig: (cb) => cb({ layout: q.get('layout') || 'pill', open: q.has('open') }),
       onState: (cb) => setTimeout(() => cb({ status: 'ok', updated: Date.now(), bars: [
-        { label: 'Current session', pct: 34, resetsAt: soon(3) },
-        { label: 'This week', pct: 61, resetsAt: soon(90) },
-        { label: 'Fable this week', pct: 82, resetsAt: soon(90) }] }), 100),
+        { label: 'Current session', pct: s, resetsAt: soon(3) },
+        { label: 'This week', pct: w, resetsAt: soon(90) },
+        { label: 'Fable this week', pct: f, resetsAt: soon(90) }] }), 100),
       setSize: (w, h) => { document.title = w + 'x' + h; },
       move() {}, moved() {}, refresh() {}, login() {}, menu() {},
     };
