@@ -1,12 +1,13 @@
 {
   "name": "claude-usage-pebble",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder",
-    "screenshots": "electron docs/capture.js"
+    "screenshots": "electron docs/capture.js",
+    "icon": "electron scripts/make-icon.js"
   },
   "build": {
     "appId": "com.claudeusagepebble.app",
@@ -59,7 +60,8 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Claude Usage Pebble",
       "artifactName": "${name}-${os}-${arch}-setup.${ext}"
-    }
+    },
+    "icon": "build/icon.png"
   },
   "devDependencies": {
     "electron": "^44.7.2",
