@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>Claude Usage Pebble</title>
+<style>
+  :root {
+    --bg: #1f1f1e; --line: #323230; --fg: #f0f0ee; --dim: #a0a09b; --soft: #2b2b2a;
+    --track: #1a2d48; --blue: #3b82f6; --amber: #f59e0b; --red: #ef4444; --accent: #d97757;
+    --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: transparent; overflow: hidden; user-select: none; }
+  body { font: 13px/1.3 "Segoe UI", -apple-system, BlinkMacSystemFont, Ubuntu, Cantarell, sans-serif; color: var(--fg); }
+  #root { position: absolute; left: 0; top: 0; width: max-content; }
+  button { all: unset; cursor: pointer; color: var(--dim); }
+  button:hover { color: var(--fg); }
+  [data-toggle] { cursor: pointer; }
+  .card { background: var(--bg); border-radius: 12px; overflow: hidden; }
+  .panel { animation: drop .18s ease-out; }
+  @keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+
+  /* shared usage list */
+  .list { padding: 8px 12px 8px; }
+  .row { padding: 6px 0 8px; }
+  .row .top { display: flex; justify-content: space-between; gap: 12px; }
+  .row .pct, .row .sub, .msg { color: var(--dim); }
+  .row .sub { font-size: 11.5px; margin-top: 1px; }
+  .bar { height: 5px; border-radius: 3px; background: var(--track); margin-top: 7px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 3px; }
+  .foot { display: flex; justify-content: space-between; color: var(--dim); font-size: 11px; padding-top: 4px; }
+  .msg { padding: 6px 0; }
+  .msg button { color: var(--accent); }
+
+  /* 1. Classic bar */
+  .pill { width: 300px; }
+  .pill .tab { height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 12px; }
+  .pill .sum { margin-left: auto; color: var(--dim); font-size: 11.5px; white-space: nowrap; }
+  .pill .list { border-top: 1px solid var(--line); margin: 0 12px; padding: 8px 0; }
+
+  /* 2. Tiny dot */
+  .dotwrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+         background: conic-gradient(var(--c) var(--p), var(--soft) 0); }
+  .dot > div { width: 24px; height: 24px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; }
+  .dotwrap .card { width: 250px; }
+
+  /* 3. Hanging critter */
+  .critter { display: flex; flex-direction: column; align-items: center; }
+  .critter .buddy { width: 84px; transform-origin: 50% 0; animation: swing 2.8s ease-in-out infinite alternate; }
+  .critter .buddy:hover, .critter.open .buddy { animation-play-state: paused; }
+  .critter.open .buddy { animation: none; }
+  @keyframes swing { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+  .critter .sign { width: 250px; position: relative; margin-top: 14px; overflow: visible; }
+  .critter .sign::before, .critter .sign::after { content: ""; position: absolute; top: -14px; width: 1px; height: 14px; background: #8a8a85; }
+  .critter .sign::before { left: 30%; } .critter .sign::after { right: 30%; }
+
+  /* 4. Rings */
+  .rings { padding: 10px 12px 8px; }
+  .rings.open { width: 270px; }
+  .ringrow { display: flex; justify-content: center; gap: 14px; }
+  .ring { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; color: var(--dim); }
+  .ring svg text { font: 600 11px/1 "Segoe UI", -apple-system, sans-serif; fill: var(--fg); }
+  .rings .list { padding: 6px 0 0; margin-top: 8px; border-top: 1px solid var(--line); }
+  .ringmsg { display: flex; gap: 8px; align-items: center; color: var(--dim); padding: 2px 4px; }
+
+  /* 5. Battery */
+  .batt .head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+  .cell { position: relative; width: 58px; height: 22px; border: 2px solid #5b5b57; border-radius: 6px; padding: 2px; }
+  .cell::after { content: ""; position: absolute; right: -6px; top: 6px; width: 3px; height: 7px; border-radius: 0 2px 2px 0; background: #5b5b57; }
+  .cell i { display: block; height: 100%; border-radius: 3px; }
+  .cell span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 11px; font-weight: 600; text-shadow: 0 0 3px #000; }
+  .batt .lbl { color: var(--dim); font-size: 11px; }
+  .batt.open { width: 260px; }
+  .batt .list { border-top: 1px solid var(--line); margin: 0 12px; padding: 8px 0; }
+
+  /* 6. Terminal */
+  .term { background: #0d1117; color: #7ee787; font: 12px/1.5 var(--mono); border: 1px solid #30363d; border-radius: 8px; padding: 5px 10px; }
+  .term .dimt { color: #6e7681; } .term .warn { color: #e3b341; } .term .hot { color: #ff7b72; }
+  .term .lines { margin-top: 4px; padding-top: 4px; border-top: 1px dashed #30363d; white-space: pre; }
+  .term button { color: #6e7681; font: inherit; } .term button:hover { color: #7ee787; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  // Demo mode: opening this file in a normal browser (no Electron bridge) shows sample data.
+  // Pick a layout with ?layout=pill|dot|critter|rings|battery|terminal and add &open to expand it.
+  if (!window.widget) {
+    const q = new URLSearchParams(location.search), soon = (h) => new Date(Date.now() + h * 3600e3).toISOString();
+    window.widget = {
+      onConfig: (cb) => cb({ layout: q.get('layout') || 'pill', open: q.has('open') }),
+      onState: (cb) => setTimeout(() => cb({ status: 'ok', updated: Date.now(), bars: [
+        { label: 'Current session', pct: 34, resetsAt: soon(3) },
+        { label: 'This week', pct: 61, resetsAt: soon(90) },
+        { label: 'Fable this week', pct: 82, resetsAt: soon(90) }] }), 100),
+      setSize: (w, h) => { document.title = w + 'x' + h; },
+      move() {}, moved() {}, refresh() {}, login() {}, menu() {},
+    };
+  }
+
+  const root = document.getElementById('root');
+  let state = { status: 'loading', bars: [] }, layout = 'pill', open = false;
+
+  // ---------- helpers ----------
+  const bars = () => state.bars || [];
+  const r = (n) => Math.round(n);
+  const clamp = (n) => Math.min(100, Math.max(0, n));
+  const color = (p) => p >= 90 ? 'var(--red)' : p >= 75 ? 'var(--amber)' : 'var(--blue)';
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const time = (d) => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const short = (b, i) => i === 0 ? 'Session' : i === 1 ? 'Week' : b.label.split(' ')[0];
+  const login = () => state.status === 'login';
+
+  function resetText(b, compact) {
+    if (b.sub) return compact ? b.sub.replace(/^Resets\s*/i, '') : b.sub;
+    if (!b.resetsAt) return '';
+    const d = new Date(b.resetsAt), today = d.toDateString() === new Date().toDateString();
+    const when = today ? time(d) : d.toLocaleDateString([], { weekday: compact ? 'short' : 'long' }) + ' ' + time(d);
+    return compact ? when : 'Resets ' + (today ? 'at ' : '') + when;
+  }
+
+  function summary() {
+    const b = bars();
+    if (login()) return 'Click to sign in';
+    if (b.length >= 2) return `Session ${r(b[0].pct)}%  ·  Week ${r(b[1].pct)}%`;
+    return state.status === 'error' ? 'Error' : 'Loading…';
+  }
+
+  function spark(size, col) {
+    let lines = '';
+    for (let i = 0; i < 10; i++) {
+      const a = i * Math.PI / 5, len = i % 2 ? 5.5 : 7;
+      lines += `<line x1="${Math.cos(a) * 1.5}" y1="${Math.sin(a) * 1.5}" x2="${Math.cos(a) * len}" y2="${Math.sin(a) * len}"/>`;
+    }
+    return `<svg width="${size}" height="${size}" viewBox="-8 -8 16 16" aria-hidden="true"><g stroke="${col || 'var(--accent)'}" stroke-width="1.8" stroke-linecap="round">${lines}</g></svg>`;
+  }
+
+  function foot() {
+    const left = state.status === 'error' ? esc(state.message) : state.updated ? 'Updated ' + time(new Date(state.updated)) : '';
+    return `<div class="foot"><span>${left}</span><button data-act="refresh">↻ Refresh</button></div>`;
+  }
+
+  // The expanded usage list most layouts share.
+  function list() {
+    if (login()) return `<div class="list"><div class="msg">Not signed in. <button data-act="login">Sign in to claude.ai</button></div></div>`;
+    const rows = bars().map((x) => `
+      <div class="row">
+        <div class="top"><span>${esc(x.label)}</span><span class="pct">${r(x.pct)}% used</span></div>
+        <div class="sub">${esc(resetText(x))}</div>
+        <div class="bar"><i style="width:${clamp(x.pct)}%;background:${color(x.pct)}"></i></div>
+      </div>`).join('');
+    return `<div class="list">${rows || `<div class="msg">${state.status === 'error' ? esc(state.message) : 'Loading…'}</div>`}${foot()}</div>`;
+  }
+
+  // ---------- layouts ----------
+  const layouts = {
+    // 1. Classic bar: a slim tab with a pull-down drawer.
+    pill: () => `
+      <div class="card pill">
+        <div class="tab" data-toggle>${spark(16)}<b>Claude</b><span class="sum">${summary()} ${login() ? '' : open ? '▴' : '▾'}</span></div>
+        ${open ? `<div class="panel">${list()}</div>` : ''}
+      </div>`,
+
+    // 2. Tiny dot: a 30px ring that fills with session usage.
+    dot: () => {
+      const s = bars()[0], p = s ? clamp(s.pct) : 0;
+      return `
+        <div class="dotwrap">
+          <div class="dot" data-toggle title="${esc(summary())}" style="--p:${p}%;--c:${s ? color(s.pct) : 'var(--soft)'}"><div>${spark(13)}</div></div>
+          ${open ? `<div class="card panel">${list()}</div>` : ''}
+        </div>`;
+    },
+
+    // 3. Hanging critter: dangles from a thread, drops lower as the week fills up, and its face shows how worried to be.
+    critter: () => {
+      const b = bars(), week = b[1] ? clamp(b[1].pct) : 0;
+      const worst = b.reduce((m, x) => Math.max(m, x.pct), 0);
+      const T = 14 + Math.round(week * 0.4), cy = T + 24;
+      const mouth = login() ? `<circle cx="42" cy="${cy + 7}" r="2" fill="#2a1a14"/>`
+        : worst >= 80 ? `<path d="M36 ${cy + 9} q6 -6 12 0" stroke="#2a1a14" stroke-width="2" fill="none" stroke-linecap="round"/>`
+        : worst >= 50 ? `<path d="M37 ${cy + 7} h10" stroke="#2a1a14" stroke-width="2" stroke-linecap="round"/>`
+        : `<path d="M36 ${cy + 5} q6 6 12 0" stroke="#2a1a14" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+      const sweat = worst >= 80 ? `<path d="M62 ${cy - 12} q3 5 0 7 q-3 -2 0 -7z" fill="#7cc4ff"/>` : '';
+      const legs = [-1, 1].map((d) => [[-8, 0], [4, 6]].map(([y, k]) =>
+        `<path d="M${42 + d * 20} ${cy + y} q${d * 8} ${-4 + k} ${d * 12} ${4 + k}" stroke="#b85f43" stroke-width="2.4" fill="none" stroke-linecap="round"/>`).join('')).join('');
+      const tag = login() ? 'sign in' : b[0] ? r(b[0].pct) + '%' : '…';
+      return `
+        <div class="critter ${open ? 'open' : ''}">
+          <svg class="buddy" data-toggle viewBox="0 0 84 ${cy + 40}" height="${cy + 40}" aria-label="${esc(summary())}">
+            <title>${esc(summary())}</title>
+            <line x1="42" y1="0" x2="42" y2="${cy - 20}" stroke="#8a8a85" stroke-width="1.2"/>
+            ${legs}
+            <ellipse cx="42" cy="${cy}" rx="22" ry="20" fill="var(--accent)"/>
+            <circle cx="35" cy="${cy - 4}" r="2.8" fill="#2a1a14"/><circle cx="49" cy="${cy - 4}" r="2.8" fill="#2a1a14"/>
+            <circle cx="36" cy="${cy - 5}" r="0.9" fill="#fff"/><circle cx="50" cy="${cy - 5}" r="0.9" fill="#fff"/>
+            <ellipse cx="29" cy="${cy + 3}" rx="3.5" ry="2" fill="#f2a58c" opacity=".7"/><ellipse cx="55" cy="${cy + 3}" rx="3.5" ry="2" fill="#f2a58c" opacity=".7"/>
+            ${mouth}${sweat}
+            <rect x="24" y="${cy + 23}" width="36" height="14" rx="7" fill="var(--bg)"/>
+            <text x="42" y="${cy + 33}" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--fg)" font-family="Segoe UI, sans-serif">${tag}</text>
+          </svg>
+          ${open ? `<div class="card sign panel">${list()}</div>` : ''}
+        </div>`;
+    },
+
+    // 4. Rings: one gauge per limit, always visible.
+    rings: () => {
+      const b = bars().slice(0, 3);
+      const ring = (x, i) => {
+        const C = 2 * Math.PI * 17, p = clamp(x.pct);
+        return `<div class="ring"><svg width="44" height="44" viewBox="0 0 44 44">
+            <circle cx="22" cy="22" r="17" fill="none" stroke="var(--soft)" stroke-width="5"/>
+            <circle cx="22" cy="22" r="17" fill="none" stroke="${color(x.pct)}" stroke-width="5" stroke-linecap="round"
+              stroke-dasharray="${(C * p / 100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/>
+            <text x="22" y="26" text-anchor="middle">${r(x.pct)}%</text></svg>${esc(short(x, i))}</div>`;
+      };
+      const top = b.length ? b.map(ring).join('') : `<div class="ringmsg">${spark(14)}${summary()}</div>`;
+      return `<div class="card rings ${open ? 'open' : ''}"><div class="ringrow" data-toggle>${top}</div>${open ? `<div class="panel">${list()}</div>` : ''}</div>`;
+    },
+
+    // 5. Battery: how much of the session is LEFT, like a phone battery.
+    battery: () => {
+      const s = bars()[0], left = s ? 100 - clamp(s.pct) : 0;
+      const fill = left <= 10 ? 'var(--red)' : left <= 25 ? 'var(--amber)' : '#22c55e';
+      return `
+        <div class="card batt ${open ? 'open' : ''}">
+          <div class="head" data-toggle title="${esc(summary())}">
+            ${spark(14)}
+            <div class="cell"><i style="width:${s ? left : 0}%;background:${fill}"></i><span>${s ? r(left) + '%' : login() ? '!' : '…'}</span></div>
+            <span class="lbl">${login() ? 'sign in' : 'left'}</span>
+          </div>
+          ${open ? `<div class="panel">${list()}</div>` : ''}
+        </div>`;
+    },
+
+    // 6. Terminal: monospace status line for the command-line crowd.
+    terminal: () => {
+      const b = bars();
+      const blocks = (p, n) => '█'.repeat(Math.round(clamp(p) / 100 * n)) + '░'.repeat(n - Math.round(clamp(p) / 100 * n));
+      const tone = (p) => p >= 90 ? 'hot' : p >= 75 ? 'warn' : '';
+      const line = login() ? `<span class="warn">✗ not signed in</span> <span class="dimt">— click</span>`
+        : b.length >= 2 ? `<span class="dimt">❯</span> claude <span class="${tone(b[0].pct)}">5h ${blocks(b[0].pct, 6)} ${r(b[0].pct)}%</span> <span class="dimt">│</span> <span class="${tone(b[1].pct)}">7d ${blocks(b[1].pct, 6)} ${r(b[1].pct)}%</span>`
+        : `<span class="dimt">❯ claude ${state.status === 'error' ? 'error' : 'loading…'}</span>`;
+      let more = '';
+      if (open && !login()) {
+        const rows = b.map((x, i) => {
+          const name = short(x, i).toLowerCase().padEnd(8), pct = (r(x.pct) + '%').padStart(4);
+          return `<span class="${tone(x.pct)}">${esc(name)} [${blocks(x.pct, 16)}] ${pct}</span>  <span class="dimt">↻ ${esc(resetText(x, true))}</span>`;
+        }).join('\n');
+        const upd = state.status === 'error' ? esc(state.message) : state.updated ? 'updated ' + time(new Date(state.updated)) : '';
+        more = `<div class="lines panel">${rows}\n<span class="dimt">$ ${upd}</span>  <button data-act="refresh">[refresh]</button></div>`;
+      }
+      return `<div class="term"><div data-toggle>${line}</div>${more}</div>`;
+    },
+  };
+
+  // ---------- render + size the window to fit ----------
+  function render() {
+    root.innerHTML = (layouts[layout] || layouts.pill)();
+    requestAnimationFrame(() => {
+      const b = root.getBoundingClientRect();
+      window.widget.setSize(Math.ceil(b.width), Math.ceil(b.height));
+    });
+  }
+
+  function toggle() {
+    if (login()) return window.widget.login();
+    open = !open;
+    render();
+  }
+
+  // Click a layout's handle to toggle; drag anywhere to move the widget.
+  let drag = null;
+  root.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || e.target.closest('button')) return;
+    root.setPointerCapture(e.pointerId);
+    drag = { sx: e.screenX, sy: e.screenY, wx: window.screenX, wy: window.screenY, moved: false, handle: !!e.target.closest('[data-toggle]') };
+  });
+  root.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.screenX - drag.sx, dy = e.screenY - drag.sy;
+    if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+    if (drag.moved) window.widget.move(drag.wx + dx, drag.wy + dy);
+  });
+  root.addEventListener('pointerup', () => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (d.moved) window.widget.moved(); else if (d.handle) toggle();
+  });
+  root.addEventListener('click', (e) => {
+    const act = e.target.closest('[data-act]');
+    if (act) window.widget[act.dataset.act]();
+  });
+  window.addEventListener('contextmenu', (e) => { e.preventDefault(); window.widget.menu(); });
+
+  window.widget.onConfig((c) => { layout = c.layout; open = !!c.open; render(); });
+  window.widget.onState((s) => {
+    state = s;
+    if (login()) open = false;
+    render();
+  });
+  render();
+</script>
+</body>
+</html>

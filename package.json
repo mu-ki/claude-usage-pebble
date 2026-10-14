@@ -1,0 +1,43 @@
+{
+  "name": "claude-usage-pebble",
+  "version": "1.0.0",
+  "description": "A tiny always-on-top Claude usage widget for Windows, macOS and Linux, with six layouts.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.claudeusagepebble.app",
+    "productName": "Claude Usage Pebble",
+    "files": [
+      "main.js",
+      "preload.js",
+      "widget.html"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Utility"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.7.2",
+    "electron-builder": "^26.15.3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mu-ki/claude-usage-pebble.git"
+  },
+  "homepage": "https://github.com/mu-ki/claude-usage-pebble"
+}
