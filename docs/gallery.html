@@ -6,26 +6,39 @@
 <title>Layout Gallery</title>
 <style>
   body { margin: 0; padding: 24px 16px; background: #3f4652; color: #f0f0ee; font: 14px/1.4 "Segoe UI", -apple-system, sans-serif; }
-  h1 { font-size: 20px; margin: 0 0 4px; } p { margin: 0 0 20px; color: #c9cdd4; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 14px; }
-  .item { background: #2f3540; border-radius: 10px; padding: 10px; }
+  h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 28px 0 10px; } p { margin: 0 0 16px; color: #c9cdd4; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 14px; }
+  .item { background: #2f3540; border-radius: 10px; padding: 10px; min-width: 0; }
   .item b { display: block; margin-bottom: 8px; }
-  .pair { display: flex; flex-direction: column; gap: 4px; }
-  iframe { border: 0; width: 100%; height: 400px; background: transparent; } iframe.c { height: 140px; }
-  .pair div { flex: 1; min-width: 0; font-size: 11px; color: #9aa1ab; }
+  .shot { font-size: 11px; color: #9aa1ab; margin-top: 6px; }
+  iframe { display: block; border: 0; width: 100%; height: 150px; background: #262b33; border-radius: 6px; }
+  iframe.open { height: 400px; }
+  /* the screen edge the widget docks to */
+  .top iframe { border-top: 3px solid #5b6472; } .bottom iframe { border-bottom: 3px solid #5b6472; }
+  .right iframe { border-right: 3px solid #5b6472; } .left iframe { border-left: 3px solid #5b6472; }
+  .top iframe.alert, .left iframe.alert, .right iframe.alert { height: 260px; } .bottom iframe.alert { height: 290px; }
 </style>
 </head>
 <body>
 <h1>Claude Usage Pebble: layouts</h1>
-<p>Sample data. Each layout collapsed (top) and expanded (below). Switch layouts in the app with right-click → Layout.</p>
-<div class="grid" id="grid"></div>
+<p>Sample data. Each layout is shown calm, with a usage alert (a limit above 80%), and expanded. Switch layouts in the app with right-click → Layout.</p>
+<div id="groups"></div>
 <script>
-  const names = { pill: 'Classic bar', dot: 'Tiny dot', critter: 'Hanging critter', rings: 'Rings', battery: 'Battery', terminal: 'Terminal' };
-  document.getElementById('grid').innerHTML = Object.entries(names).map(([id, n]) => `
-    <div class="item"><b>${n}</b><div class="pair">
-      <div>collapsed<iframe class="c" src="../widget.html?layout=${id}"></iframe></div>
-      <div>expanded<iframe src="../widget.html?layout=${id}&open"></iframe></div>
-    </div></div>`).join('');
+  const GROUPS = [
+    ['Widgets', 'top', { pill: 'Classic bar', dot: 'Tiny dot', rings: 'Rings', battery: 'Battery', terminal: 'Terminal' }],
+    ['Hanging from the top', 'top', { critter: 'Hanging critter', bat: 'Sleepy bat', sloth: 'Sloth on a branch', yoyo: 'Yo-yo', lantern: 'Paper lantern' }],
+    ['Peeking from the side', null, { cat: 'Peeking cat', octopus: 'Octopus', ghost: 'Shy ghost' }],
+    ['Sitting on the bottom', 'bottom', { cactus: 'Cactus', robot: 'Robot', fishbowl: 'Fish bowl' }],
+  ];
+  const SIDE = { cat: 'right', octopus: 'right', ghost: 'left' };
+  const src = (id, q) => `../widget.html?layout=${id}${q}`;
+  document.getElementById('groups').innerHTML = GROUPS.map(([title, dock, items]) => `
+    <h2>${title}</h2><div class="grid">${Object.entries(items).map(([id, name]) => `
+      <div class="item ${dock || SIDE[id]}"><b>${name}</b>
+        <div class="shot">calm</div><iframe loading="lazy" src="${src(id, '&pct=24,38,30')}"></iframe>
+        <div class="shot">usage alert (Fable at 86%)</div><iframe class="alert" loading="lazy" src="${src(id, '&pct=45,72,86&alert')}"></iframe>
+        <div class="shot">expanded</div><iframe class="open" loading="lazy" src="${src(id, '&pct=24,38,30&open')}"></iframe>
+      </div>`).join('')}</div>`).join('');
 </script>
 </body>
 </html>
