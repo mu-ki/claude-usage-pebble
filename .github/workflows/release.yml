@@ -17,14 +17,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Targets and archs come from the "build" config in package.json.
+          # Naming a target here (e.g. "--mac dmg") would override its arch
+          # with the runner's own, so the mac build would be arm64 only.
           - os: windows-latest
-            args: --win portable
+            args: --win
             files: dist/*.exe
           - os: macos-latest
-            args: --mac dmg
+            args: --mac
             files: dist/*.dmg
           - os: ubuntu-latest
-            args: --linux AppImage
+            args: --linux
             files: dist/*.AppImage
 
     steps:
