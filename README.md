@@ -6,6 +6,24 @@ Pick from six layouts, from a 30px dot to a little critter hanging off the top o
 
 > Unofficial community project. Not affiliated with or endorsed by Anthropic. "Claude" is a trademark of Anthropic.
 
+## Download
+
+Grab the latest build from the **[Releases page](https://github.com/mu-ki/claude-usage-pebble/releases/latest)**:
+
+| OS | File to download |
+|---|---|
+| Windows | `claude-usage-pebble-<version>-win-x64.exe` (portable, no installer) |
+| macOS | `claude-usage-pebble-<version>-mac-universal.dmg` (Intel and Apple silicon) |
+| Linux | `claude-usage-pebble-<version>-linux-x86_64.AppImage` |
+
+The builds are not code-signed, so your OS will warn you the first time:
+
+- **Windows:** SmartScreen says "Windows protected your PC". Click **More info → Run anyway**.
+- **macOS:** right-click the app → **Open**, then **Open** again. Or run `xattr -dr com.apple.quarantine "/Applications/Claude Usage Pebble.app"`.
+- **Linux:** make the file executable first: `chmod +x claude-usage-pebble-*.AppImage`, then run it.
+
+Prefer to build it yourself? See [Install and run](#install-and-run) below.
+
 ## Layouts
 
 Right-click the widget → **Layout** to switch. Your choice and position are remembered.
