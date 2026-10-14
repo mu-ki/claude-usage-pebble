@@ -202,14 +202,17 @@ function openLogin() {
 // ---------- start at login (Windows/macOS via Electron, Linux via an autostart .desktop file) ----------
 const linuxAutostart = () => path.join(os.homedir(), '.config', 'autostart', 'claude-usage-pebble.desktop');
 const loginArgs = () => (app.isPackaged ? [] : [app.getAppPath()]);
+// The Windows portable exe runs from a temp folder that is deleted on exit, so register the
+// original .exe instead (electron-builder passes its path in PORTABLE_EXECUTABLE_FILE).
+const loginPath = () => process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
 
 function autostartGet() {
   if (process.platform === 'linux') return fs.existsSync(linuxAutostart());
-  return app.getLoginItemSettings({ args: loginArgs() }).openAtLogin;
+  return app.getLoginItemSettings({ path: loginPath(), args: loginArgs() }).openAtLogin;
 }
 
 function autostartSet(on) {
-  if (process.platform !== 'linux') return app.setLoginItemSettings({ openAtLogin: on, args: loginArgs() });
+  if (process.platform !== 'linux') return app.setLoginItemSettings({ openAtLogin: on, path: loginPath(), args: loginArgs() });
   const file = linuxAutostart();
   if (!on) return fs.rmSync(file, { force: true });
   const exec = [process.env.APPIMAGE || process.execPath, ...loginArgs()].map((a) => `"${a}"`).join(' ');
